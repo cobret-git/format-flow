@@ -132,6 +132,55 @@ namespace FormatFlow.Tests.Subtitles
             Assert.AreEqual(TimeSpan.FromMilliseconds(2750), document.Entries[0].EndTime);
         }
 
+
+
+        [TestMethod]
+        public void Read_ShortTimestampFormat_ParsesCorrectly()
+        {
+            // Arrange - MM:SS.mmm format without hours (valid per VTT spec)
+            using var stream = VttTestData.ToStream(VttTestData.ShortTimestampVtt);
+
+            // Act
+            var document = _reader.Read(stream);
+
+            // Assert
+            Assert.AreEqual(2, document.Entries.Count);
+
+            var first = document.Entries[0];
+            Assert.AreEqual(TimeSpan.FromMilliseconds(350), first.StartTime);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(3320), first.EndTime);
+            Assert.AreEqual("First subtitle with short timestamps", first.Text);
+
+            var second = document.Entries[1];
+            Assert.AreEqual(TimeSpan.FromSeconds(5), second.StartTime);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(8500), second.EndTime);
+        }
+
+        [TestMethod]
+        public void Read_MixedTimestampFormats_ParsesAllCorrectly()
+        {
+            // Arrange - Mix of MM:SS.mmm and HH:MM:SS.mmm
+            using var stream = VttTestData.ToStream(VttTestData.MixedTimestampVtt);
+
+            // Act
+            var document = _reader.Read(stream);
+
+            // Assert
+            Assert.AreEqual(3, document.Entries.Count);
+
+            // Short format: 00:00.500
+            Assert.AreEqual(TimeSpan.FromMilliseconds(500), document.Entries[0].StartTime);
+            Assert.AreEqual(TimeSpan.FromSeconds(2), document.Entries[0].EndTime);
+
+            // Long format: 00:00:03.000
+            Assert.AreEqual(TimeSpan.FromSeconds(3), document.Entries[1].StartTime);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(5500), document.Entries[1].EndTime);
+
+            // Short format with minutes: 01:30.000 = 90 seconds
+            Assert.AreEqual(TimeSpan.FromSeconds(90), document.Entries[2].StartTime);
+            Assert.AreEqual(TimeSpan.FromSeconds(95), document.Entries[2].EndTime);
+        }
+
         #endregion
 
         #region Formatting Tags
@@ -201,6 +250,31 @@ namespace FormatFlow.Tests.Subtitles
 
             // Assert
             Assert.IsNull(document.Entries[0].Position);
+        }
+
+        [TestMethod]
+        public void Read_ShortTimestampsWithCueSettings_ParsesBoth()
+        {
+            // Arrange - Short timestamps with position settings
+            const string vtt = """
+                WEBVTT
+
+                1
+                00:05.000 --> 00:10.500 line:0 align:center
+                Positioned subtitle
+                """;
+            using var stream = VttTestData.ToStream(vtt);
+
+            // Act
+            var document = _reader.Read(stream);
+
+            // Assert
+            var entry = document.Entries[0];
+            Assert.AreEqual(TimeSpan.FromSeconds(5), entry.StartTime);
+            Assert.AreEqual(TimeSpan.FromMilliseconds(10500), entry.EndTime);
+            Assert.IsNotNull(entry.Position);
+            Assert.AreEqual(0, entry.Position.Line);
+            Assert.AreEqual(PositionAlignment.Center, entry.Position.Align);
         }
 
         #endregion

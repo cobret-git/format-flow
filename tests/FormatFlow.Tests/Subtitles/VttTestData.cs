@@ -192,6 +192,40 @@ namespace FormatFlow.Tests.Subtitles
             Some text
             """;
 
+        /// <summary>
+        /// Short timestamp format (MM:SS.mmm without hours) - valid per VTT spec
+        /// </summary>
+        public const string ShortTimestampVtt = """
+            WEBVTT
+
+            1
+            00:00.350 --> 00:03.320
+            First subtitle with short timestamps
+
+            2
+            00:05.000 --> 00:08.500
+            Second subtitle
+            """;
+
+        /// <summary>
+        /// Mixed timestamp formats (some with hours, some without)
+        /// </summary>
+        public const string MixedTimestampVtt = """
+            WEBVTT
+
+            1
+            00:00.500 --> 00:02.000
+            Short format
+
+            2
+            00:00:03.000 --> 00:00:05.500
+            Long format
+
+            3
+            01:30.000 --> 01:35.000
+            Short format with minutes
+            """;
+
         // Helper to convert string to stream
         public static Stream ToStream(string content) =>
             new MemoryStream(Encoding.UTF8.GetBytes(content));

@@ -1,5 +1,6 @@
 ﻿using FormatFlow.Core.Subtitles;
 using FormatFlow.Core.Subtitles.Vtt;
+using System.Reflection.PortableExecutable;
 
 namespace FormatFlow.Tests.Subtitles
 {

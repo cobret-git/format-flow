@@ -1,10 +1,25 @@
-﻿namespace FormatFlow.Cli
+﻿using FormatFlow.Core.Subtitles;
+using FormatFlow.Core.Subtitles.Srt;
+using FormatFlow.Core.Subtitles.Vtt;
+
+namespace FormatFlow.Cli
 {
     internal class Program
     {
-        static void Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            var converter = CreateConverter();
+            var reporter = new ConsoleReporter();
+
+            var app = new CliApp(converter, reporter);
+            return await app.RunAsync(args);
+        }
+
+        private static SubtitleConverter CreateConverter()
+        {
+            var readers = new ISubtitleReader[] { new SrtReader(), new VttReader() };
+            var writers = new ISubtitleWriter[] { new SrtWriter(), new VttWriter() };
+            return new SubtitleConverter(readers, writers);
         }
     }
 }

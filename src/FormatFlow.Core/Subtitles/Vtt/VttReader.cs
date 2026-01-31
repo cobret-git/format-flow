@@ -8,9 +8,9 @@ namespace FormatFlow.Core.Subtitles.Vtt
         public string Format => "vtt";
 
         // Regex for timestamp line with optional cue settings
-        // "00:00:01.000 --> 00:00:04.000 line:0 position:50% align:center"
+        // Supports both "00:00:01.000 --> 00:00:04.000" and "00:01.000 --> 00:04.000" formats
         private static readonly Regex TimestampRegex = new(
-            @"^(\d{2}:\d{2}:\d{2}\.\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}\.\d{3})(.*)$",
+            @"^((?:\d{2}:)?\d{2}:\d{2}\.\d{3})\s*-->\s*((?:\d{2}:)?\d{2}:\d{2}\.\d{3})(.*)$",
             RegexOptions.Compiled);
 
         // Regex for voice tag: <v Speaker Name>text</v>
@@ -126,15 +126,35 @@ namespace FormatFlow.Core.Subtitles.Vtt
 
         private static TimeSpan ParseTime(string time)
         {
-            // "00:00:20.000" → TimeSpan
+            // Supports both "00:00:20.000" (HH:MM:SS.mmm) and "00:20.000" (MM:SS.mmm)
             var parts = time.Split(':', '.');
-            return new TimeSpan(
-                0, // days
-                int.Parse(parts[0]),  // hours
-                int.Parse(parts[1]),  // minutes
-                int.Parse(parts[2]),  // seconds
-                int.Parse(parts[3])   // milliseconds
-            );
+
+            if (parts.Length == 4)
+            {
+                // HH:MM:SS.mmm format
+                return new TimeSpan(
+                    0, // days
+                    int.Parse(parts[0]),  // hours
+                    int.Parse(parts[1]),  // minutes
+                    int.Parse(parts[2]),  // seconds
+                    int.Parse(parts[3])   // milliseconds
+                );
+            }
+            else if (parts.Length == 3)
+            {
+                // MM:SS.mmm format (no hours)
+                return new TimeSpan(
+                    0, // days
+                    0, // hours
+                    int.Parse(parts[0]),  // minutes
+                    int.Parse(parts[1]),  // seconds
+                    int.Parse(parts[2])   // milliseconds
+                );
+            }
+            else
+            {
+                throw new FormatException($"Invalid VTT timestamp format: {time}");
+            }
         }
 
         private static (SubtitlePosition? Position, SubtitleStyle? Style) ParseCueSettings(string settings)
