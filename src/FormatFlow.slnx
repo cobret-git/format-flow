@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="FormatFlow.Cli/FormatFlow.Cli.csproj" Id="28906aad-19d6-46bb-9a79-dd38d0170109" />
+  <Project Path="FormatFlow.Core/FormatFlow.Core.csproj" />
+</Solution>
