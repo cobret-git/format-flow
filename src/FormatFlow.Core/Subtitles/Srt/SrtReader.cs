@@ -64,6 +64,7 @@ namespace FormatFlow.Core.Subtitles.Srt
             // "00:00:20,000" → 20 seconds
             var parts = time.Split(':', ',');
             return new TimeSpan(
+                0, // days
                 int.Parse(parts[0]),  // hours
                 int.Parse(parts[1]),  // minutes
                 int.Parse(parts[2]),  // seconds
