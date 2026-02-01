@@ -68,33 +68,58 @@ namespace FormatFlow.Core.Subtitles.Vtt
             return $"{time.Hours:D2}:{time.Minutes:D2}:{time.Seconds:D2}.{time.Milliseconds:D3}";
         }
 
-        private static string FormatCueSettings(SubtitlePosition? position)
+        private static string FormatCueSettings(ISubtitlePosition? position)
         {
             if (position == null)
                 return string.Empty;
 
             var parts = new List<string>();
 
-            if (position.Line.HasValue)
-                parts.Add($"line:{position.Line.Value}");
-
-            if (position.Position.HasValue)
-                parts.Add($"position:{position.Position.Value}%");
-
-            if (position.Align.HasValue)
+            // Handle VttPosition natively with full fidelity
+            if (position is VttPosition vtt)
             {
-                var alignStr = position.Align.Value switch
+                if (vtt.Vertical != null)
+                    parts.Add($"vertical:{vtt.Vertical}");
+
+                if (vtt.Line.HasValue)
+                    parts.Add($"line:{vtt.Line.Value}");
+
+                if (vtt.Position.HasValue)
+                    parts.Add($"position:{vtt.Position.Value}%");
+
+                if (vtt.Size.HasValue)
+                    parts.Add($"size:{vtt.Size.Value}%");
+
+                if (vtt.HorizontalAlign.HasValue)
                 {
-                    PositionAlignment.Start => "start",
-                    PositionAlignment.Center => "center",
-                    PositionAlignment.End => "end",
-                    _ => null
-                };
-                if (alignStr != null)
-                    parts.Add($"align:{alignStr}");
+                    var alignStr = FormatAlignment(vtt.HorizontalAlign.Value);
+                    if (alignStr != null)
+                        parts.Add($"align:{alignStr}");
+                }
+            }
+            else
+            {
+                // Generic fallback: extract only what VTT supports from any position type
+                if (position.HorizontalAlign.HasValue)
+                {
+                    var alignStr = FormatAlignment(position.HorizontalAlign.Value);
+                    if (alignStr != null)
+                        parts.Add($"align:{alignStr}");
+                }
             }
 
             return string.Join(" ", parts);
+        }
+
+        private static string? FormatAlignment(PositionAlignment align)
+        {
+            return align switch
+            {
+                PositionAlignment.Start => "start",
+                PositionAlignment.Center => "center",
+                PositionAlignment.End => "end",
+                _ => null
+            };
         }
     }
 }

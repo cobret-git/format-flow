@@ -1,11 +1,6 @@
 ﻿using FormatFlow.Core.Subtitles.Srt;
 using FormatFlow.Core.Subtitles.Vtt;
 using FormatFlow.Tests.Subtitles.Srt;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FormatFlow.Tests.Subtitles.Vtt
 {
@@ -62,12 +57,12 @@ namespace FormatFlow.Tests.Subtitles.Vtt
             // Assert
             for (int i = 0; i < document.Entries.Count; i++)
             {
-                var original = document.Entries[i];
-                var roundTrip = documentAfterRoundTrip.Entries[i];
+                var original = document.Entries[i].Position as VttPosition;
+                var roundTrip = documentAfterRoundTrip.Entries[i].Position as VttPosition;
 
-                Assert.AreEqual(original.Position?.Line, roundTrip.Position?.Line);
-                Assert.AreEqual(original.Position?.Position, roundTrip.Position?.Position);
-                Assert.AreEqual(original.Position?.Align, roundTrip.Position?.Align);
+                Assert.AreEqual(original?.Line, roundTrip?.Line);
+                Assert.AreEqual(original?.Position, roundTrip?.Position);
+                Assert.AreEqual(original?.HorizontalAlign, roundTrip?.HorizontalAlign);
             }
         }
 

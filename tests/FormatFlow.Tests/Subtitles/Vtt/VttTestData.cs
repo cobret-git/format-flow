@@ -1,4 +1,5 @@
 ﻿using FormatFlow.Core.Subtitles;
+using FormatFlow.Core.Subtitles.Vtt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -327,21 +328,21 @@ namespace FormatFlow.Tests.Subtitles.Vtt
                     StartTime = TimeSpan.Zero,
                     EndTime = TimeSpan.FromSeconds(2),
                     Text = "Centered at top",
-                    Position = new SubtitlePosition { Line = 0, Position = 50, Align = PositionAlignment.Center }
+                    Position = new VttPosition { Line = 0, Position = 50, HorizontalAlign = PositionAlignment.Center }
                 },
                 new SubtitleEntry
                 {
                     StartTime = TimeSpan.FromSeconds(3),
                     EndTime = TimeSpan.FromSeconds(5),
                     Text = "Bottom right aligned",
-                    Position = new SubtitlePosition { Line = -1, Align = PositionAlignment.End }
+                    Position = new VttPosition { Line = -1, HorizontalAlign = PositionAlignment.End }
                 },
                 new SubtitleEntry
                 {
                     StartTime = TimeSpan.FromSeconds(6),
                     EndTime = TimeSpan.FromSeconds(8),
                     Text = "Left positioned",
-                    Position = new SubtitlePosition { Position = 10, Align = PositionAlignment.Start }
+                    Position = new VttPosition { Position = 10, HorizontalAlign = PositionAlignment.Start }
                 }
             }
         };

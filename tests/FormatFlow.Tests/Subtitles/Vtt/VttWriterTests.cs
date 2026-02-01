@@ -164,7 +164,7 @@ namespace FormatFlow.Tests.Subtitles.Vtt
                         StartTime = TimeSpan.Zero,
                         EndTime = TimeSpan.FromSeconds(2),
                         Text = "Test",
-                        Position = new SubtitlePosition { Line = 5 }
+                        Position = new VttPosition { Line = 5 }
                     }
                 }
             };

@@ -23,7 +23,6 @@ namespace FormatFlow.Core.Subtitles.Vtt
             encoding ??= Encoding.UTF8;
             using var reader = new StreamReader(stream, encoding, leaveOpen: true);
 
-            var metadata = new SubtitleMetadata();
             var entries = new List<SubtitleEntry>();
 
             // First line must be WEBVTT (with optional BOM)
@@ -77,7 +76,7 @@ namespace FormatFlow.Core.Subtitles.Vtt
 
                 var startTime = ParseTime(match.Groups[1].Value);
                 var endTime = ParseTime(match.Groups[2].Value);
-                var settings = ParseCueSettings(match.Groups[3].Value.Trim());
+                var position = ParseCueSettings(match.Groups[3].Value.Trim());
 
                 // Read text lines until empty line
                 var textBuilder = new StringBuilder();
@@ -107,8 +106,7 @@ namespace FormatFlow.Core.Subtitles.Vtt
                     EndTime = endTime,
                     Text = textBuilder.ToString(),
                     VoiceLabel = voiceLabel,
-                    Position = settings.Position,
-                    Style = settings.Style
+                    Position = position
                 });
             }
 
@@ -157,14 +155,16 @@ namespace FormatFlow.Core.Subtitles.Vtt
             }
         }
 
-        private static (SubtitlePosition? Position, SubtitleStyle? Style) ParseCueSettings(string settings)
+        private static VttPosition? ParseCueSettings(string settings)
         {
             if (string.IsNullOrWhiteSpace(settings))
-                return (null, null);
+                return null;
 
             int? line = null;
             int? position = null;
+            int? size = null;
             PositionAlignment? align = null;
+            string? vertical = null;
 
             var parts = settings.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -186,6 +186,10 @@ namespace FormatFlow.Core.Subtitles.Vtt
                         if (int.TryParse(value, out var posVal))
                             position = posVal;
                         break;
+                    case "size":
+                        if (int.TryParse(value, out var sizeVal))
+                            size = sizeVal;
+                        break;
                     case "align":
                         align = value.ToLowerInvariant() switch
                         {
@@ -195,14 +199,24 @@ namespace FormatFlow.Core.Subtitles.Vtt
                             _ => null
                         };
                         break;
+                    case "vertical":
+                        vertical = value;
+                        break;
                 }
             }
 
-            var positionObj = (line != null || position != null || align != null)
-                ? new SubtitlePosition { Line = line, Position = position, Align = align }
-                : null;
+            // Only create position if at least one setting was found
+            if (line == null && position == null && size == null && align == null && vertical == null)
+                return null;
 
-            return (positionObj, null);
+            return new VttPosition
+            {
+                Line = line,
+                Position = position,
+                Size = size,
+                HorizontalAlign = align,
+                Vertical = vertical
+            };
         }
     }
 }

@@ -1,10 +1,5 @@
 ﻿using FormatFlow.Core.Subtitles;
 using FormatFlow.Core.Subtitles.Vtt;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FormatFlow.Tests.Subtitles.Vtt
 {
@@ -132,8 +127,6 @@ namespace FormatFlow.Tests.Subtitles.Vtt
             Assert.AreEqual(TimeSpan.FromMilliseconds(2750), document.Entries[0].EndTime);
         }
 
-
-
         [TestMethod]
         public void Read_ShortTimestampFormat_ParsesCorrectly()
         {
@@ -222,21 +215,25 @@ namespace FormatFlow.Tests.Subtitles.Vtt
             // First: line:0 position:50% align:center
             var first = document.Entries[0];
             Assert.IsNotNull(first.Position);
-            Assert.AreEqual(0, first.Position.Line);
-            Assert.AreEqual(50, first.Position.Position);
-            Assert.AreEqual(PositionAlignment.Center, first.Position.Align);
+            Assert.IsInstanceOfType(first.Position, typeof(VttPosition));
+            var firstVtt = (VttPosition)first.Position;
+            Assert.AreEqual(0, firstVtt.Line);
+            Assert.AreEqual(50, firstVtt.Position);
+            Assert.AreEqual(PositionAlignment.Center, firstVtt.HorizontalAlign);
 
             // Second: line:-1 align:end
             var second = document.Entries[1];
             Assert.IsNotNull(second.Position);
-            Assert.AreEqual(-1, second.Position.Line);
-            Assert.AreEqual(PositionAlignment.End, second.Position.Align);
+            var secondVtt = (VttPosition)second.Position;
+            Assert.AreEqual(-1, secondVtt.Line);
+            Assert.AreEqual(PositionAlignment.End, secondVtt.HorizontalAlign);
 
             // Third: position:10% align:start
             var third = document.Entries[2];
             Assert.IsNotNull(third.Position);
-            Assert.AreEqual(10, third.Position.Position);
-            Assert.AreEqual(PositionAlignment.Start, third.Position.Align);
+            var thirdVtt = (VttPosition)third.Position;
+            Assert.AreEqual(10, thirdVtt.Position);
+            Assert.AreEqual(PositionAlignment.Start, thirdVtt.HorizontalAlign);
         }
 
         [TestMethod]
@@ -273,8 +270,9 @@ namespace FormatFlow.Tests.Subtitles.Vtt
             Assert.AreEqual(TimeSpan.FromSeconds(5), entry.StartTime);
             Assert.AreEqual(TimeSpan.FromMilliseconds(10500), entry.EndTime);
             Assert.IsNotNull(entry.Position);
-            Assert.AreEqual(0, entry.Position.Line);
-            Assert.AreEqual(PositionAlignment.Center, entry.Position.Align);
+            var vttPosition = (VttPosition)entry.Position;
+            Assert.AreEqual(0, vttPosition.Line);
+            Assert.AreEqual(PositionAlignment.Center, vttPosition.HorizontalAlign);
         }
 
         #endregion

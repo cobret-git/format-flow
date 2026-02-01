@@ -1,5 +1,6 @@
 ﻿using FormatFlow.Core.Subtitles;
 using FormatFlow.Core.Subtitles.Sbv;
+using FormatFlow.Core.Subtitles.Vtt;
 
 namespace FormatFlow.Tests.Subtitles.Sbv
 {
@@ -156,7 +157,7 @@ namespace FormatFlow.Tests.Subtitles.Sbv
         [TestMethod]
         public void Write_DocumentWithPosition_IgnoresPosition()
         {
-            // Arrange - SBV doesn't support positioning
+            // Arrange - SBV doesn't support positioning (VTT feature)
             var document = new SubtitleDocument
             {
                 Entries = new[]
@@ -166,7 +167,7 @@ namespace FormatFlow.Tests.Subtitles.Sbv
                         StartTime = TimeSpan.Zero,
                         EndTime = TimeSpan.FromSeconds(2),
                         Text = "Test",
-                        Position = new SubtitlePosition { Line = 0, Position = 50, Align = PositionAlignment.Center }
+                        Position = new VttPosition { Line = 0, Position = 50, HorizontalAlign = PositionAlignment.Center }
                     }
                 }
             };
