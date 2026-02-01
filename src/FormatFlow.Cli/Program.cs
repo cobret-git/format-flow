@@ -1,4 +1,5 @@
 ﻿using FormatFlow.Core.Subtitles;
+using FormatFlow.Core.Subtitles.Sbv;
 using FormatFlow.Core.Subtitles.Srt;
 using FormatFlow.Core.Subtitles.Vtt;
 
@@ -17,8 +18,8 @@ namespace FormatFlow.Cli
 
         private static SubtitleConverter CreateConverter()
         {
-            var readers = new ISubtitleReader[] { new SrtReader(), new VttReader() };
-            var writers = new ISubtitleWriter[] { new SrtWriter(), new VttWriter() };
+            var readers = new ISubtitleReader[] { new SrtReader(), new VttReader(), new SbvReader() };
+            var writers = new ISubtitleWriter[] { new SrtWriter(), new VttWriter(), new SbvWriter() };
             return new SubtitleConverter(readers, writers);
         }
     }
