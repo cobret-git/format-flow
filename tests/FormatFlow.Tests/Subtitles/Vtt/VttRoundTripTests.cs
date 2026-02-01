@@ -1,12 +1,13 @@
 ﻿using FormatFlow.Core.Subtitles.Srt;
 using FormatFlow.Core.Subtitles.Vtt;
+using FormatFlow.Tests.Subtitles.Srt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FormatFlow.Tests.Subtitles
+namespace FormatFlow.Tests.Subtitles.Vtt
 {
     [TestClass]
     public class VttRoundTripTests

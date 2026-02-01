@@ -1,6 +1,6 @@
 ﻿using FormatFlow.Core.Subtitles.Srt;
 
-namespace FormatFlow.Tests.Subtitles
+namespace FormatFlow.Tests.Subtitles.Srt
 {
     [TestClass]
     public class SrtWriterTests

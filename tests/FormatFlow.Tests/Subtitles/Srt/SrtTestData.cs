@@ -1,7 +1,7 @@
 ﻿using FormatFlow.Core.Subtitles;
 using System.Text;
 
-namespace FormatFlow.Tests.Subtitles
+namespace FormatFlow.Tests.Subtitles.Srt
 {
     public static class SrtTestData
     {

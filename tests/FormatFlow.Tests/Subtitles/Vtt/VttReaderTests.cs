@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FormatFlow.Tests.Subtitles
+namespace FormatFlow.Tests.Subtitles.Vtt
 {
     [TestClass]
     public class VttReaderTests

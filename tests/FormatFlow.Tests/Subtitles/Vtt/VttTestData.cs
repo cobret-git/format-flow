@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FormatFlow.Tests.Subtitles
+namespace FormatFlow.Tests.Subtitles.Vtt
 {
     public static class VttTestData
     {

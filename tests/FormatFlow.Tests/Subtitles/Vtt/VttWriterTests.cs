@@ -2,7 +2,7 @@
 using FormatFlow.Core.Subtitles.Vtt;
 using System.Reflection.PortableExecutable;
 
-namespace FormatFlow.Tests.Subtitles
+namespace FormatFlow.Tests.Subtitles.Vtt
 {
     [TestClass]
     public class VttWriterTests
