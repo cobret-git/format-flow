@@ -2,4 +2,5 @@
   <Project Path="../tests/FormatFlow.Tests/FormatFlow.Tests.csproj" Id="30208f52-51a7-48a5-953d-c7defd32519b" />
   <Project Path="FormatFlow.Cli/FormatFlow.Cli.csproj" Id="28906aad-19d6-46bb-9a79-dd38d0170109" />
   <Project Path="FormatFlow.Core/FormatFlow.Core.csproj" />
+  <Project Path="FormatFlow.WebApp/FormatFlow.WebApp.csproj" Id="9612a8f2-a456-4ef6-ac48-33f9b7bbec0c" />
 </Solution>
