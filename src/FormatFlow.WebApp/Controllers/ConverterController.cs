@@ -7,13 +7,16 @@ namespace FormatFlow.WebApp.Controllers
     public class ConverterController : ControllerBase
     {
         [HttpPost("convert-to-sbv")]
-        [Consumes("multipart/form-data")]
-        public IActionResult ConvertToSbv([FromForm] IFormFile file)
+        public async Task<IActionResult> ConvertToSbv(IFormFile file)
         {
+            // Line 13 ↓ — breakpoint goes here
             if (file == null || file.Length == 0)
-                return BadRequest("File wasn't selected.");
+                return BadRequest("No file provided.");
 
-            return Ok("File was accepted, but conversion wasn't done.");
+            using var stream = file.OpenReadStream();
+            // TODO: wire up SubtitleConverter here
+
+            return Ok($"Received: {file.FileName} ({file.Length} bytes)");
         }
     }
 }
