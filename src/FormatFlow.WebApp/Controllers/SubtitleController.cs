@@ -4,7 +4,7 @@ namespace FormatFlow.WebApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ConverterController : ControllerBase
+    public class SubtitleController : ControllerBase
     {
         [HttpPost("convert-to-sbv")]
         public async Task<IActionResult> ConvertToSbv(IFormFile file)
