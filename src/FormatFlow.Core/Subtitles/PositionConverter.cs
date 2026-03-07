@@ -1,4 +1,5 @@
-﻿using FormatFlow.Core.Subtitles.Vtt;
+﻿using FormatFlow.Core.Subtitles.Ttml;
+using FormatFlow.Core.Subtitles.Vtt;
 
 namespace FormatFlow.Core.Subtitles
 {
@@ -78,5 +79,115 @@ namespace FormatFlow.Core.Subtitles
 
             return position.HorizontalAlign.HasValue;
         }
+
+        #region TTML Conversions
+
+        /// <summary>
+        /// Convert any position to TtmlRegion.
+        /// Returns null if source is null.
+        /// </summary>
+        public static TtmlRegion? ToTtmlRegion(ISubtitlePosition? position, string regionId = "r1")
+        {
+            if (position == null)
+                return null;
+
+            if (position is TtmlRegion ttml)
+                return ttml;
+
+            if (position is VttPosition vtt)
+                return VttToTtmlRegion(vtt, regionId);
+
+            // Generic fallback - create basic region with alignment only
+            return new TtmlRegion
+            {
+                RegionId = regionId,
+                HorizontalAlign = position.HorizontalAlign
+            };
+        }
+
+        /// <summary>
+        /// Convert VttPosition to TtmlRegion with approximate mapping.
+        /// </summary>
+        private static TtmlRegion VttToTtmlRegion(VttPosition vtt, string regionId)
+        {
+            // Map VTT line to TTML originY
+            string? originY = vtt.Line switch
+            {
+                0 => "10%",           // Top
+                -1 or null => "80%",  // Bottom (default)
+                var l when l > 0 => $"{10 + l * 10}%",
+                var l when l < -1 => $"{90 + (l + 1) * 10}%",
+                _ => null
+            };
+
+            // Map VTT position to TTML originX
+            string? originX = vtt.Position.HasValue ? $"{vtt.Position}%" : "10%";
+
+            // Map VTT size to TTML extent width
+            string? extentWidth = vtt.Size.HasValue ? $"{vtt.Size}%" : "80%";
+
+            return new TtmlRegion
+            {
+                RegionId = regionId,
+                OriginX = originX,
+                OriginY = originY,
+                ExtentWidth = extentWidth,
+                ExtentHeight = "20%",
+                HorizontalAlign = vtt.HorizontalAlign
+            };
+        }
+
+        /// <summary>
+        /// Convert TtmlRegion to VttPosition with approximate mapping.
+        /// Lossy conversion - TTML regions have more capabilities than VTT cue settings.
+        /// </summary>
+        public static VttPosition? TtmlToVttPosition(TtmlRegion? region)
+        {
+            if (region == null)
+                return null;
+
+            return new VttPosition
+            {
+                Line = ParsePercentageToVttLine(region.OriginY),
+                Position = ParsePercentage(region.OriginX),
+                Size = ParsePercentage(region.ExtentWidth),
+                HorizontalAlign = region.HorizontalAlign
+            };
+        }
+
+        /// <summary>
+        /// Parse percentage string to integer (e.g., "50%" → 50).
+        /// Returns null for non-percentage values like "100px".
+        /// </summary>
+        private static int? ParsePercentage(string? value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return null;
+
+            if (value.EndsWith('%') && int.TryParse(value.TrimEnd('%'), out var result))
+                return result;
+
+            return null;
+        }
+
+        /// <summary>
+        /// Convert TTML originY percentage to VTT line number.
+        /// </summary>
+        private static int? ParsePercentageToVttLine(string? originY)
+        {
+            var percent = ParsePercentage(originY);
+            if (!percent.HasValue)
+                return null;
+
+            // Approximate mapping: 10% → 0, 80% → -1, etc.
+            return percent.Value switch
+            {
+                <= 20 => 0,
+                >= 70 => -1,
+                _ => (percent.Value - 10) / 10
+            };
+        }
+
+        #endregion
     }
 }
